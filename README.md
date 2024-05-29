@@ -22,6 +22,7 @@ to install all dependencies for the webapp. On Linux, we might have to install t
 streamlit run app.py
 ```
 + Quick deployment of Streamlit Community Cloud: [https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app).
++ Deployed webapp: [https://object-seg-track-app-bdzxhcbp2aodib4qojdewz.streamlit.app/](https://object-seg-track-app-bdzxhcbp2aodib4qojdewz.streamlit.app/).
 ## Features and Usages
 + User can upload a video consists of objects to the webapp and see the segmentation result.
 + Live camera object segmentation (Sadly, only works on local machine). Segmentation of objects captured by the local machine camera are shown in real-time.
