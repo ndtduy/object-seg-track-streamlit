@@ -6,6 +6,7 @@ from ultralytics.utils.plotting import Annotator, colors
 import streamlit as st
 
 def detectOnFrame(model, labels, frame):
+    # https://docs.ultralytics.com/guides/instance-segmentation-and-tracking/
     result = model.predict(frame)
     annotator = Annotator(frame, line_width=2)
 
@@ -42,8 +43,8 @@ def detectOnUploadedVideo(model):
     
     with col2:
         container = st.empty()
-        stop_button_pressed = st.button('Stop')
-        while cap.isOpened() and not stop_button_pressed:
+        stop_button = st.button('Stop')
+        while cap.isOpened() and not stop_button:
             ret, frame = cap.read()
             if not ret:
                 # st.write("Video Ended!")
@@ -53,7 +54,7 @@ def detectOnUploadedVideo(model):
             frame = detectOnFrame(model, labels, frame)
             container.image(frame, channels="RGB", use_column_width=True)
             
-            if cv2.waitKey(1) == 27 or stop_button_pressed:
+            if stop_button:
                 break
         
         cap.release()
@@ -65,8 +66,8 @@ def detectOnLiveCamera(model):
 
     labels = model.model.names
     container = st.empty()
-    stop_button_pressed = st.button("Stop")
-    while cap.isOpened() and not stop_button_pressed:
+    stop_button = st.button("Stop")
+    while cap.isOpened() and not stop_button:
         ret, frame = cap.read()
         if not ret:
             st.write("Video Capture Ended!")
@@ -75,12 +76,12 @@ def detectOnLiveCamera(model):
         frame = detectOnFrame(model, labels, frame)
         container.image(frame, channels="RGB", use_column_width=True)
         
-        if stop_button_pressed:
+        if stop_button:
             break
     
     cap.release()
 
-def handle(model, choice):
+def runTask(model, choice):
     if choice == 'Object segmentation on uploaded video':
         detectOnUploadedVideo(model)
     elif choice == 'Live camera object segmentation':
@@ -89,12 +90,12 @@ def handle(model, choice):
         st.warning("Please select a task from the sidebar.")
 
 def main():
-    st.set_page_config(page_title="YOLOv8", page_icon="🚀", layout="wide")
+    st.set_page_config(page_title="Instance Segmentation YOLOv8", layout="wide")
     st.title("Real-time Object Instance Segmentation")
     st.caption("Powered by Ultralytics, OpenCV, Streamlit")
 
     with st.sidebar:
-        st.title("YOLOv8 Instance Segmentation")
+        st.title("Real-time Object Instance Segmentation")
 
         task_choice = st.selectbox(
             'Choose an option',
@@ -102,10 +103,10 @@ def main():
             index=None,
             placeholder='Select a task',
         )
-        "[Repository URL](https://github.com/ndtduy/object-seg-track-streamlit)"
+        "[GitHub Repository](https://github.com/ndtduy/object-seg-track-streamlit)"
 
     model = YOLO("yolov8n-seg.pt")
-    handle(model, task_choice)
+    runTask(model, task_choice)
 
 if __name__ == "__main__":
     main()
