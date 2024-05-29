@@ -3,7 +3,6 @@ import uuid
 import cv2
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
-# import numpy as np
 import streamlit as st
 
 def detectOnFrame(model, labels, frame):
@@ -22,6 +21,8 @@ def detectOnFrame(model, labels, frame):
 def detectOnUploadedVideo(model):
     uploaded_file = st.file_uploader("Upload video from machine...", type=["mp4", "mov"])
     if uploaded_file is not None:
+        if not os.path.exists("upload_videos"):
+            os.makedirs("upload_videos")
         uploaded_file_path = os.path.join("upload_videos", uuid.uuid4().hex + uploaded_file.name)
         uploaded_file_bytes = uploaded_file.read()
         with open(uploaded_file_path, 'wb') as f:
@@ -33,7 +34,6 @@ def detectOnUploadedVideo(model):
     
     labels = model.model.names
 
-    stop_button_pressed = st.button('Stop')
     col1, col2 = st.columns(2)
     with col1:
         video_file = open(uploaded_file_path, 'rb')
@@ -42,6 +42,7 @@ def detectOnUploadedVideo(model):
     
     with col2:
         container = st.empty()
+        stop_button_pressed = st.button('Stop')
         while cap.isOpened() and not stop_button_pressed:
             ret, frame = cap.read()
             if not ret:
@@ -101,6 +102,7 @@ def main():
             index=None,
             placeholder='Select a task',
         )
+        "[Repository URL](https://github.com/ndtduy/object-seg-track-streamlit)"
 
     model = YOLO("yolov8n-seg.pt")
     handle(model, task_choice)
